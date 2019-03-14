@@ -355,6 +355,6 @@ def article(request, username, id):
     })
 
 def test():
-    return 1
+    return 2
 
 
