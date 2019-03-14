@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>login</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'bootstrap-3.3.7/css/bootstrap.css' %}">
+    <link rel="stylesheet" href="{% static 'my_css.css' %}">
+</head>
+<body>
+{% csrf_token %}
+<div class="container">
+    <div class="row">
+        <div class="col-md-6 col-md-offset-3">
+
+            <form class="login-form">
+                <div class="form-group">
+                    <label for="{{ form_obj.username.id_for_label }}">{{ form_obj.username.label }}</label>
+                    {{ form_obj.username }}
+                </div>
+
+                <div class="form-group">
+                    <label for="{{ form_obj.password.id_for_label }}">{{ form_obj.password.label }}</label>
+                    {{ form_obj.password }}
+                </div>
+
+                <div class="form-group">
+                    <label for="v-code" style="display: block">验证码</label>  <!--block把验证码三个字单独一行-->
+                    <input type="text" id="v-code" class="form-control" style="width: 250px;display: inline-block">
+                    <!--inline-block行内-->
+                    <img src="/v-code/" id="i2" style="float: right">
+                </div>
+                <p id="error-msg" class="error_text"></p>
+                <button type="button" class="btn btn-default" id="bbs">Submit</button>
+                <div id="popup-captcha"></div>  <!--滑动验证码出现的地方-->
+                <div>用户名:hanlei/密码:qaz123wsx</div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script src="{% static 'jquery.js' %}"></script>
+<!-- 引入封装了failback的接口--initGeetest -->
+<script src="http://static.geetest.com/static/tools/gt.js"></script>
+
+<script>
+    var handlerPopup = function (captchaObj) {
+        // 成功的回调
+        captchaObj.onSuccess(function () {
+            var validate = captchaObj.getValidate();
+            $.ajax({
+                url: "/login2/", // 进行二次验证
+                type: "post",
+                data: {
+                    username: $("#id_username").val(),  // 获取自己这个项目中的密码跟用户名
+                    password: $("#id_password").val(),
+                    csrfmiddlewaretoken: $("[name='csrfmiddlewaretoken']").val(),
+                    geetest_challenge: validate.geetest_challenge,
+                    geetest_validate: validate.geetest_validate,
+                    geetest_seccode: validate.geetest_seccode
+                },
+                success: function (res) {  // 滑动验证码成功之后做的事情
+                    console.log(res);
+                if (res.code !== 0) {
+                    // 如果后端传来的数据code不等于0,说明登录失败
+                    $("#error-msg").text(res.msg);
+                } else {
+                    // 如果登录成功跳转到index页面
+                    location.href = '/index/'
+                }
+                }
+            });
+        });
+
+        // 点击那个按钮弹出滑动验证码
+        $("#bbs").click(function () {
+            captchaObj.show();
+        });
+        // 将验证码加到id为captcha的元素里
+        captchaObj.appendTo("#popup-captcha");
+        // 更多接口参考：http://www.geetest.com/install/sections/idx-client-sdk.html
+    };
+    // 验证开始需要向网站主后台获取id，challenge，success（是否启用failback）
+    $.ajax({
+        url: "/pcgetcaptcha/?t=" + (new Date()).getTime(), // 加随机数防止缓存
+        type: "get",
+        dataType: "json",
+        success: function (data) {
+            // 使用initGeetest接口
+            // 参数1：配置参数
+            // 参数2：回调，回调的第一个参数验证码对象，之后可以使用它做appendTo之类的事件
+            initGeetest({
+                gt: data.gt,
+                challenge: data.challenge,
+                product: "popup", // 产品形式，包括：float，embed，popup。注意只对PC版验证码有效
+                offline: !data.success // 表示用户后台检测极验服务器是否宕机，一般不需要关注
+                // 更多配置参数请参见：http://www.geetest.com/install/sections/idx-client-sdk.html#config
+            }, handlerPopup);
+        }
+    });
+</script>
+
+</body>
+</html>

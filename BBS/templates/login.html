@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>login</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'bootstrap-3.3.7/css/bootstrap.css' %}">
+    <link rel="stylesheet" href="{% static 'my_css.css' %}">
+</head>
+<body>
+{% csrf_token %}
+<div class="container">
+    <div class="row">
+        <div class="col-md-6 col-md-offset-3">
+
+            <form class="login-form">
+                <div class="form-group">
+                    <label for="{{ form_obj.username.id_for_label }}">{{ form_obj.username.label }}</label>
+                    {{ form_obj.username }}
+                </div>
+
+                <div class="form-group">
+                    <label for="{{ form_obj.password.id_for_label }}">{{ form_obj.password.label }}</label>
+                    {{ form_obj.password }}
+                </div>
+
+                <div class="form-group">
+                    <label for="v-code" style="display: block">验证码</label>  <!--block把验证码三个字单独一行-->
+                    <input type="text" id="v-code" class="form-control" style="width: 250px;display: inline-block">
+                    <!--inline-block行内-->
+                    <img src="/v-code/" id="i2" style="float: right">
+                </div>
+                <p id="error-msg" class="error_text"></p>
+                <button type="button" class="btn btn-default" id="bbs">Submit</button>
+
+                <div>用户名:hanlei/密码:qaz123wsx</div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script src="{% static 'jquery.js' %}"></script>
+<script>
+    $('#bbs').click(function () {
+        // 获取用户填写的数据
+        let username = $("#id_username").val();  // val是获取内容
+        let password = $("#id_password").val();
+        // 获取csrf_token,因为不是form表单提交,所以不需要写在form表单里面
+        let csrfToken = $("[name='csrfmiddlewaretoken']").val();
+        // 获取验证码
+        let code_num = $("#v-code").val();
+        // 发送ajax请求
+        $.ajax({
+            url: "/login/",
+            type: 'post',
+            data: {
+                username: username,
+                password: password,
+                csrfmiddlewaretoken: csrfToken,
+                code_num: code_num
+            },
+            success: function (res) {
+                console.log(res);
+                if (res.code !== 0) {
+                    // 如果后端传来的数据code不等于0,说明登录失败
+                    $("#error-msg").text(res.msg);
+                } else {
+                    // 如果登录成功跳转到index页面
+                    location.href = '/index/'
+                }
+            }
+        })
+    });
+
+    // input框获取到焦点时,提示信息消失 用到focus
+    $("input").focus(function () {
+        // 获取到焦点,错误信息就为空
+        $("#error-msg").text("")
+    });
+
+    // 用户点击验证码给验证码的src加"?"实现局部刷新
+    $("#i2").click(function () {
+        // this.src += "?"
+        // 使用正则判断一下,如果是原来的url有?就去掉,没有就加上
+        let url = this.src;
+        if (/\?$/.test(url)){
+            // 去掉最后的?
+            this.src = url.slice(0,-1)  // 切片,把最后的?切掉
+        }else{
+            // 没有?,就加上
+            this.src = url + "?"
+        }
+        console.log(this.src)
+    })
+</script>
+</body>
+</html>

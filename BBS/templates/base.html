@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ blog.title }}</title>
+    <link rel="stylesheet" href="/static/bootstrap-3.3.7/css/bootstrap.css">
+    <link rel="stylesheet" href="/static/css/blog.css">  <!--默认的主题,如果没有默认的,就用自定义的-->
+    <link rel="stylesheet" href="/static/theme/{{ blog.theme }}">  <!--每个人都有不同的主题-->
+</head>
+<body>
+
+<!--每个博客的顶部菜单  开始-->
+<div class="head"></div>
+<!--每个博客的顶部菜单  结束-->
+
+
+<!--页面主题   开始-->
+<div class="container-fluid">
+    <div class="row">
+        <!--左侧侧边栏  开始-->
+        <div class="col-md-2">
+            {% load s12 %}
+            {% left_menu username %}
+        </div>
+
+        <!--左侧侧边栏  结束-->
+
+        <!--右侧侧边栏  开始-->
+        <div class="col-md-10">
+            {% block page-main %}
+            {% endblock page-main %}
+
+        </div>
+        <!--右侧侧边栏  结束-->
+    </div>
+</div>
+<!--页面主题   结束-->
+</body>
+</html>

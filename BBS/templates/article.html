@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% block page-main %}
+    <div class="article-content">
+        <h1>{{ article.title }}</h1>
+        <p>{{ article.articledetail.content|safe }}</p>  <!--articledetail一对一可以直接按照表名查找,safe是识别数据库存储的HTML文件展现在页面上-->
+    </div>
+
+
+    <hr>
+
+
+    <!--点赞功能  开始-->
+    <div id="div_digg">
+        <!-- 点赞 -->
+        <div class="diggit digg">
+            <span class="diggnum" id="digg_count">{{ article.up_count }}</span>
+        </div>
+        <!-- 反对 -->
+        <div class="buryit digg">
+            <span class="burynum" id="bury_count">{{ article.down_count }}</span>
+        </div>
+        <div class="clear"></div>
+        <!-- 提示信息 -->
+        <div class="diggword" id="digg_tips"></div>
+    </div>
+    <!--点赞功能  结束-->
+{% endblock %}

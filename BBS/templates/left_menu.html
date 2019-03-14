@@ -1,0 +1,40 @@
+<!--左侧侧边栏  开始-->
+    <div class="panel panel-success">
+        <div class="panel-heading">
+            <h3 class="panel-title">文章分类</h3>
+        </div>
+        <div class="panel-body">
+            {% for category in  category_list %}
+                <p>
+                    <a href="/blog/{{ username }}/category/{{ category.title }}">{{ category.title }}({{ category.article_set.all.count }})</a>
+                </p>
+            {% endfor %}
+        </div>
+    </div>
+
+    <div class="panel panel-info">
+        <div class="panel-heading">
+            <h3 class="panel-title">文章标签</h3>
+        </div>
+        <div class="panel-body">
+            {% for tag in tag_list %}
+                <p>
+                    <a href="/blog/{{ username }}/tag/{{ tag.title }}">{{ tag.title }}({{ tag.article_set.all.count }})</a>
+                </p>
+            {% endfor %}
+        </div>
+    </div>
+
+    <div class="panel panel-warning">
+        <div class="panel-heading">
+            <h3 class="panel-title">日期归档</h3>
+        </div>
+        <div class="panel-body">
+            <!--查询出这个用户所有的文章,按照   年月(个数)   的格式展示出来-->
+            {% for archive in archive_list %}
+                <p><a href="/blog/{{ username }}/archive/{{ archive.y_m }}">{{ archive.y_m }}({{ archive.c }})</a>
+                </p>
+            {% endfor %}
+        </div>
+    </div>
+<!--左侧侧边栏  结束-->

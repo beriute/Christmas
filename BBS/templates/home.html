@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+
+{% block page-main %}
+    <!--右侧侧边栏  开始-->
+    <div class="col-md-10">
+        <div class="article-list">
+            {% for article in article_list %}
+                <!--文章开始-->
+                <div class="article">
+                    <!--每个文章就是一个div-->
+                    <div class="media">
+                        <h3 class="media-heading"><a href="/blog/{{ username }}/p/{{ article.id }}">{{ article.title }}</a></h3>
+                        <div class="media-left">
+                            <a href="#">
+                                <img class="media-object author-avatar" src="/media/{{ article.user.avatar }}"
+                                     alt="...">
+                            </a>
+                        </div>
+                        <div class="media-body">
+                            <div>
+                                {{ article.desc }}  <!--文章描述-->
+                            </div>
+                            <div class="article-footer">
+                                <span><a href="/blog/{{ username }}"></a>{{ username }}</span><span>发布于 {{ article.create_time|date:'Y-m-d h:i:s' }}</span>
+                                <span class="glyphicon glyphicon-comment">评论({{ article.comment_count }})</span>
+                                <span class="glyphicon glyphicon-thumbs-up">点赞({{ article.up_count }})</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <hr>
+                <!--文章结束-->
+            {% endfor %}
+        </div>
+        <!--分页开始-->
+        {{ page_html|safe }}
+        <!--分页结束-->
+    </div>
+    <!--右侧侧边栏  结束-->
+{% endblock page-main %}
