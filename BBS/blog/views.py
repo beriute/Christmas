@@ -354,3 +354,7 @@ def article(request, username, id):
         "article": article_obj,
     })
 
+def test():
+    return 1
+
+
