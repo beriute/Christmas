@@ -355,6 +355,10 @@ def article(request, username, id):
     })
 
 def test():
+<<<<<<< HEAD
     return 3
+=======
+    return 2
+>>>>>>> c962b49f4dd0cbaee41ba0af7da641b4738c5514
 
 
